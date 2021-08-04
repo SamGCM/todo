@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { Modal} from "react-native";
 
@@ -23,23 +23,69 @@ export default function CreateTask() {
   const [bg, setBg] = useState('#F5EEFD')
   const [color, setColor] = useState('#A362EA')
 
-  const [inputName, setInputName] = useState('')
-  const [inputDate, setInputDate] = useState('')
-  const [inputHour, setInputHour] = useState('')
+
+  const [tasks, setTasks] = useState(null)
+  const [name, setInputName] = useState('')
+  const [date, setInputDate] = useState('')
+  const [hour, setInputHour] = useState('')
+
+  const tasksRef = useRef(0)
 
   const navigation = useNavigation()
 
 
+
+
   // Salva no local storage
-  const storeData = async (key, value) => {
+  const Store = async () => {
+    let Task = {
+      name, date, hour
+    }
+
     try {
-      const jsonValue = JSON.stringify(value)
-      console.log(value)
-      await AsyncStorage.setItem(key, jsonValue)
+      const value = await AsyncStorage.getItem('Task');
+      if (value != null) {
+        const storage = await AsyncStorage.getItem('Task')
+        const jsonValue = JSON.stringify(Task)
+        await AsyncStorage.setItem('Task', storage.concat(jsonValue))
+      } else {
+        const jsonValue = JSON.stringify(Task)
+        await AsyncStorage.setItem('Task', jsonValue )
+      }
+    } catch (error) {
+      return error
+    }   
+  }
+
+  const storeData = async () => {
+    try {
+      
+      await AsyncStorage.setItem('Task')
     } catch (e) {
-      return e
+      console.log(e)
     }
   }
+
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('Task')
+      return setTasks(jsonValue)
+    } catch(e) {
+      // error reading value
+    }
+  }
+
+  
+  
+
+  // useEffect(() => {
+  //   Store()
+  //   tasksRef.current++
+  // })
+
+  
+
+
 
 
   //Lista para renderizar as opções de tipos de task
@@ -155,14 +201,7 @@ export default function CreateTask() {
       
         <ButtonCreate
           onPress={() => {
-            storeData(
-              inputName
-              ,{
-                name: inputName,
-                date: inputDate,
-                hour: inputHour
-              }
-            )
+            Store()
             navigation.goBack()
           }}
         >
