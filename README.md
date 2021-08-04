@@ -1,5 +1,10 @@
 # To Do
 
+## Modelo:
+
+![image](https://user-images.githubusercontent.com/73077149/128214284-a8b927e6-8316-4d57-ba8a-2f4ff20d9a7b.png)
+
+
 ## Descrição
 Esse app foi feito como teste para uma vaga. Foi o meu primeiro contato com React Native.
 
